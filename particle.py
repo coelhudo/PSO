@@ -51,11 +51,8 @@ class Particle:
 
     def move(self, global_best):
         particle_op = (self.__particle_best - self.position).scalar_mul(2 * random()/10)
-        print('particle {}'.format(particle_op))
         global_op = (global_best - self.position).scalar_mul(2 * random()/10)
-        print('global {}'.format(global_op))
         self.__velocity += particle_op + global_op
-        print('velocity {}'.format(self.__velocity))
         self.__position += self.__velocity
         self.update(self.__velocity)
 

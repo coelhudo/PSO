@@ -12,7 +12,7 @@ plt.axis([0, 1, 0, 1])
 for i in arange(0, 1, 0.1):
     plt.gcf().gca().add_artist(plt.Circle((0.5, 0.5), i, color='black', fill=False))
 
-particles = [Particle(i) for i in range(0, 10)]
+particles = [Particle(i) for i in range(0, 100)]
 
 xs, ys = zip(*[(p.position.x, p.position.y) for p in particles])
 particles_lines = [plt.plot(x, y, 'ro') for x, y in zip(xs, ys)]
@@ -43,6 +43,7 @@ for particle, particle_line in zip(particles, particles_lines):
 #for particle in particles:
 #    print(str(particle) + ' fitness {}'.format(utility_function(particle.position)))
 
+global_solution = None
 for i in arange(1, 1000):
     #for annotate, particle_lines in zip(annotates, particles_lines):
     for particle in particles:
@@ -52,6 +53,9 @@ for i in arange(1, 1000):
 
     global_best = max([(particle.p_best, utility_function(particle.p_best)) for particle in particles],
                       key=lambda x: x[1])
+    global_solution = global_best[0]
 
     for particle in particles:
         particle.move(global_best[0])
+
+print('Global solution {}'.format(global_solution))
