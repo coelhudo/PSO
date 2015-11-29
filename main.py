@@ -2,7 +2,7 @@ __author__ = 'coelhudo'
 
 from numpy import arange
 import matplotlib.pyplot as plt
-from particle import Particle
+from particle import Particle, Point
 from random import random
 from utility_function import utility_function
 
@@ -14,14 +14,14 @@ for i in arange(0, 1, 0.1):
 
 particles = [Particle(i) for i in range(0, 10)]
 
-xs, ys = zip(*[(p.position[0], p.position[1]) for p in particles])
+xs, ys = zip(*[(p.position.x, p.position.y) for p in particles])
 particles_lines = [plt.plot(x, y, 'ro') for x, y in zip(xs, ys)]
 
 for particle, particle_line in zip(particles, particles_lines):
     def make_update_particle():
         def update_particle(current_delta, current_particle_line=particle_line[0]):
-            current_particle_line.set_xdata(current_particle_line.get_xdata() + current_delta[0])
-            current_particle_line.set_ydata(current_particle_line.get_ydata() + current_delta[1])
+            current_particle_line.set_xdata(current_particle_line.get_xdata() + current_delta.x)
+            current_particle_line.set_ydata(current_particle_line.get_ydata() + current_delta.y)
             plt.draw()
         return update_particle
 
@@ -47,9 +47,11 @@ for i in arange(1, 1000):
     #for annotate, particle_lines in zip(annotates, particles_lines):
     for particle in particles:
         factor = -1 if random() > 0.5 else 1
-        delta = (factor * random()/10, factor * random()/10)
-        current_utility = utility_function(particle.position)
-        new_position = tuple(map(sum, zip(particle.position, delta)))
-        new_utility = utility_function(new_position)
-        if new_utility > current_utility:
-            particle.move(delta)
+        delta = Point(factor * random()/10, factor * random()/10)
+        particle.calculate_fitness(delta)
+
+    global_best = max([(particle.p_best, utility_function(particle.p_best)) for particle in particles],
+                      key=lambda x: x[1])
+
+    for particle in particles:
+        particle.move(global_best[0])

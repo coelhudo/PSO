@@ -1,26 +1,66 @@
 __author__ = 'coelhudo'
 
 from random import random
+from utility_function import utility_function
+
+
+class Point:
+    def __init__(self, x, y):
+        self.__x = x
+        self.__y = y
+
+    def __add__(self, other):
+        return Point(self.__x + other.__x, self.__y + other.__y)
+
+    def __sub__(self, other):
+        return Point(self.__x - other.__x, self.__y - other.__y)
+
+    def scalar_mul(self, scalar):
+        return Point(self.__x * scalar, self.__y * scalar)
+
+    @property
+    def x(self):
+        return self.__x
+
+    @property
+    def y(self):
+        return self.__y
+
+    def __str__(self):
+        return '({}, {})'.format(self.x, self.y)
 
 class Particle:
     def __init__(self, id):
         self.__id = id
-        self.particle_best = 0
-        self.global_best = 0
-        self.__position = (random(), random())
-        self.velocity = 0
-        self.direction = 0
+        self.__position = Point(random(), random())
+        self.__particle_best = self.__position
+        self.__velocity = Point(0, 0)
 
     @property
     def position(self):
         return self.__position
 
+    @property
+    def p_best(self):
+        return self.__particle_best
+
+    def calculate_fitness(self, delta):
+        candidate = self.position + delta
+        if utility_function(candidate) > utility_function(self.__position):
+            self.__particle_best = candidate
+
+    def move(self, global_best):
+        particle_op = (self.__particle_best - self.position).scalar_mul(2 * random()/10)
+        print('particle {}'.format(particle_op))
+        global_op = (global_best - self.position).scalar_mul(2 * random()/10)
+        print('global {}'.format(global_op))
+        self.__velocity += particle_op + global_op
+        print('velocity {}'.format(self.__velocity))
+        self.__position += self.__velocity
+        self.update(self.__velocity)
+
     def subscribe(self, update):
         self.update = update
-
-    def move(self, delta):
-        self.__position = tuple(map(sum,zip(self.__position,delta)))
-        self.update(delta)
 
     def __str__(self):
         return 'Agent {}'.format(str(self.__id))
