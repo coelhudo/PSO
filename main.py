@@ -4,7 +4,9 @@ from numpy import arange
 import matplotlib.pyplot as plt
 from particle import Particle, Point
 from random import random
-from utility_function import utility_function
+import utility_function
+
+print(utility_function)
 
 plt.ion()
 
@@ -12,7 +14,7 @@ plt.axis([0, 1, 0, 1])
 for i in arange(0, 1, 0.1):
     plt.gcf().gca().add_artist(plt.Circle((0.5, 0.5), i, color='black', fill=False))
 
-particles = [Particle(i) for i in range(0, 100)]
+particles = [Particle(i) for i in range(0, 50)]
 
 xs, ys = zip(*[(p.position.x, p.position.y) for p in particles])
 particles_lines = [plt.plot(x, y, 'ro') for x, y in zip(xs, ys)]
@@ -48,10 +50,10 @@ for i in arange(1, 1000):
     #for annotate, particle_lines in zip(annotates, particles_lines):
     for particle in particles:
         factor = -1 if random() > 0.5 else 1
-        delta = Point(factor * random()/10, factor * random()/10)
+        delta = Point(factor * random()/100, factor * random()/100)
         particle.calculate_fitness(delta)
 
-    global_best = max([(particle.p_best, utility_function(particle.p_best)) for particle in particles],
+    global_best = max([(particle.p_best, utility_function.f(particle.p_best)) for particle in particles],
                       key=lambda x: x[1])
     global_solution = global_best[0]
 

@@ -1,7 +1,7 @@
 __author__ = 'coelhudo'
 
 from random import random
-from utility_function import utility_function
+import utility_function
 
 
 class Point:
@@ -46,7 +46,7 @@ class Particle:
 
     def calculate_fitness(self, delta):
         candidate = self.position + delta
-        if utility_function(candidate) > utility_function(self.__position):
+        if utility_function.f(candidate) > utility_function.f(self.__position):
             self.__particle_best = candidate
 
     def move(self, global_best):
